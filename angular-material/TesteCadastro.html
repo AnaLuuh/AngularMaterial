@@ -1,0 +1,321 @@
+<html lang = "en">
+   <head>
+      <link rel = "stylesheet"
+         href = "https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+      <script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+      <script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+      <script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+      <script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+      <script src = "https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+      <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+      <style>
+         .datepickerdemo md-content {
+            padding-bottom: 200px; 
+         }
+         
+        .datepickerdemo .validation-messages {
+            font-size: 11px;
+            color: darkred;
+            margin: 10px 0 0 25px; 
+         }
+      </style>
+      <script language = "javascript">
+         angular
+            .module('firstApplication', ['ngMaterial'])
+            .controller('inputController', inputController)
+            .controller('autoCompleteController', autoCompleteController)
+	    .controller('dateController', dateController)
+	  .controller('menuController', menuController);
+
+  function menuController ($scope, $mdDialog) {
+            var originatorEv;
+            
+            this.openMenu = function($mdOpenMenu, ev) {
+               originatorEv = ev;
+               $mdOpenMenu(ev);
+            };
+            
+            this.menuItemClick = function(index) {
+               $mdDialog.show (
+                  $mdDialog.alert()
+                    .title('TutorialsPoint.com')
+                    .textContent('Menu Item clicked, index: ' + index)
+                    .ok('OK')
+                    .targetEvent(originatorEv)
+               );
+               originatorEv = null;
+            };
+         }       
+
+         function inputController ($scope) {
+            $scope.project = {
+               comments: 'Comments',    
+            };
+         }     
+ function dateController ($scope) {
+            $scope.myDate = new Date();
+            $scope.minDate = new Date(
+               $scope.myDate.getFullYear(),
+               $scope.myDate.getMonth() - 2,
+               $scope.myDate.getDate());
+               
+            $scope.maxDate = new Date(
+               $scope.myDate.getFullYear(),
+               $scope.myDate.getMonth() + 2,
+               $scope.myDate.getDate());
+               
+            $scope.onlyWeekendsPredicate = function(date) {
+               var day = date.getDay();
+               return day === 0 || day === 6;
+            }
+         }        
+	          
+         function autoCompleteController ($timeout, $q, $log) {
+            var self = this;
+            self.simulateQuery = false;
+            self.isDisabled    = false;
+            
+            // list of states to be displayed
+            self.states        = loadStates();
+            self.querySearch   = querySearch;
+            self.selectedItemChange = selectedItemChange;
+            self.searchTextChange   = searchTextChange;
+            self.newState = newState;
+            
+            function newState(state) {
+               alert("This functionality is yet to be implemented!");
+            }
+            
+            function querySearch (query) {
+               var results = query ? self.states.filter( createFilterFor(query) ) :
+                  self.states, deferred;
+                  
+               if (self.simulateQuery) {
+                  deferred = $q.defer();
+                     
+                  $timeout(function () { 
+                     deferred.resolve( results ); 
+                  }, 
+                  Math.random() * 1000, false);
+                  return deferred.promise;
+               } else {
+                  return results;
+               }
+            }
+            
+            function searchTextChange(text) {
+               $log.info('Text changed to ' + text);
+            }
+            
+            function selectedItemChange(item) {
+               $log.info('Item changed to ' + JSON.stringify(item));
+            }
+            
+            //build list of states as map of key-value pairs
+            function loadStates() {
+               var allStates = 'Minas Gerais, Sao Paulo';
+                  
+               return allStates.split(/, +/g).map( function (state) {
+                  return {
+                     value: state.toLowerCase(),
+                     display: state
+                  };
+               });
+            }
+            
+            //filter function for search query
+            function createFilterFor(query) {
+               var lowercaseQuery = angular.lowercase(query);
+               return function filterFn(state) {
+                  return (state.value.indexOf(lowercaseQuery) === 0);
+               };
+            }
+         }          
+      </script>     	  
+   </head>
+   
+   <body ng-app = "firstApplication"> 
+      <div id = "inputContainer" class = "inputDemo"
+         ng-controller = "inputController as ctrl" ng-cloak>
+         <md-content layout-padding>
+            <form name = "projectForm">
+               
+               <md-input-container class = "md-block">
+                  <label>Nome</label>
+                  <input required name = "clienteNome" ng-model = "project.clienteNome">
+                  <div ng-messages = "projectForm.clienteNome.$error">
+                     <div ng-message = "required">This is required.</div>
+                  </div>
+               </md-input-container>
+               
+               <md-input-container class = "md-block">
+                  <label>Sobrenome</label>
+                  <input required name = "clienteSobrenome" ng-model = "project.clienteSobrenome">
+                  <div ng-messages = "projectForm.clienteSobrenome.$error">
+                     <div ng-message = "required">This is required.</div>
+                  </div>
+               </md-input-container>
+
+             <div role="dialog" aria-label="Eat me!" layout="column" layout-align="center center">
+ 		 <md-toolbar>
+		    <div class="md-toolbar-tools">
+	            	<h2>Endereço comercial</h2>
+		    </div>
+	         </md-toolbar>
+ <md-input-container class = "md-block">
+                  <label>Rua</label>
+                  <input required name = "clienteNome" ng-model = "project.clienteNome">
+                  <div ng-messages = "projectForm.clienteNome.$error">
+                     <div ng-message = "required">This is required.</div>
+                  </div>
+               </md-input-container>
+               
+               <md-input-container class = "md-block">
+                  <label>Número</label>
+                  <input required name = "clienteSobrenome" ng-model = "project.clienteSobrenome">
+                  <div ng-messages = "projectForm.clienteSobrenome.$error">
+                     <div ng-message = "required">This is required.</div>
+                  </div>
+               </md-input-container>
+
+ <md-input-container class = "md-block">
+                  <label>Bairro</label>
+                  <input required name = "clienteSobrenome" ng-model = "project.clienteSobrenome">
+                  <div ng-messages = "projectForm.clienteSobrenome.$error">
+                     <div ng-message = "required">This is required.</div>
+                  </div>
+               </md-input-container>
+
+  <md-autocomplete
+                  ng-disabled = "ctrl.isDisabled"
+                  md-no-cache = "ctrl.noCache"
+                  md-selected-item = "ctrl.selectedItem"
+                  md-search-text-change = "ctrl.searchTextChange(ctrl.searchText)"
+                  md-search-text = "ctrl.searchText"
+                  md-selected-item-change = "ctrl.selectedItemChange(item)"
+                  md-items = "item in ctrl.querySearch(ctrl.searchText)"
+                  md-item-text = "item.display"
+                  md-min-length = "0"
+                  placeholder = "Estado">
+                  
+                  <md-item-template>
+                     <span md-highlight-text = "ctrl.searchText"
+                        md-highlight-flags = "^i">{{item.display}}</span>
+                  </md-item-template>
+                  
+                  <md-not-found>
+                     No states matching "{{ctrl.searchText}}" were found.
+                     <a ng-click = "ctrl.newState(ctrl.searchText)">Create a new one!</a>
+                  </md-not-found>
+               </md-autocomplete>
+
+</div>
+<br/>
+<div role="dialog" aria-label="Eat me!" layout="column" layout-align="center center">
+ 		 <md-toolbar>
+		    <div class="md-toolbar-tools">
+	            	<h2>Endereço residencial</h2>
+		    </div>
+	         </md-toolbar>
+ <md-input-container class = "md-block">
+                  <label>Rua</label>
+                  <input required name = "clienteNome" ng-model = "project.clienteNome">
+                  <div ng-messages = "projectForm.clienteNome.$error">
+                     <div ng-message = "required">This is required.</div>
+                  </div>
+               </md-input-container>
+               
+               <md-input-container class = "md-block">
+                  <label>Número</label>
+                  <input required name = "clienteSobrenome" ng-model = "project.clienteSobrenome">
+                  <div ng-messages = "projectForm.clienteSobrenome.$error">
+                     <div ng-message = "required">This is required.</div>
+                  </div>
+               </md-input-container>
+
+ <md-input-container class = "md-block">
+                  <label>Bairro</label>
+                  <input required name = "clienteSobrenome" ng-model = "project.clienteSobrenome">
+                  <div ng-messages = "projectForm.clienteSobrenome.$error">
+                     <div ng-message = "required">This is required.</div>
+                  </div>
+               </md-input-container>
+
+  <md-autocomplete
+                  ng-disabled = "ctrl.isDisabled"
+                  md-no-cache = "ctrl.noCache"
+                  md-selected-item = "ctrl.selectedItem"
+                  md-search-text-change = "ctrl.searchTextChange(ctrl.searchText)"
+                  md-search-text = "ctrl.searchText"
+                  md-selected-item-change = "ctrl.selectedItemChange(item)"
+                  md-items = "item in ctrl.querySearch(ctrl.searchText)"
+                  md-item-text = "item.display"
+                  md-min-length = "0"
+                  placeholder = "Estado">
+                  
+                  <md-item-template>
+                     <span md-highlight-text = "ctrl.searchText"
+                        md-highlight-flags = "^i">{{item.display}}</span>
+                  </md-item-template>
+                  
+                  <md-not-found>
+                     No states matching "{{ctrl.searchText}}" were found.
+                     <a ng-click = "ctrl.newState(ctrl.searchText)">Create a new one!</a>
+                  </md-not-found>
+               </md-autocomplete>
+
+</div>
+<md-input-container class = "md-block">
+                  <label>Número do cartão</label>
+                  <input required name = "clienteNome" ng-model = "project.clienteNome">
+                  <div ng-messages = "projectForm.clienteNome.$error">
+                     <div ng-message = "required">This is required.</div>
+                  </div>
+               </md-input-container>
+
+ <div class = "datepickerdemo" ng-controller = "dateController as ctrl"
+         layout = "column" ng-cloak>
+         <md-content>
+            <label>Data de nascimento</label>
+            <md-datepicker 
+               ng-model = "myDate" 
+               md-placeholder = "Enter date"></md-datepicker>
+                                                                                                                                                 
+         </md-content>
+      </div>
+ 	      <div id = "menuContainer" ng-controller = "menuController as ctrl"
+         layout = "row" ng-cloak>
+         <div layout = "column" flex = "33" flex-sm = "100"
+            layout-align = "center center">         
+            <p>Sexo</p>
+            
+            <md-menu>
+               <md-button aria-label = "Sample Menu" class = "md-icon-button"
+                  ng-click = "$mdOpenMenu($event)">
+                  <md-icon md-menu-origin class = "material-icons">more_vert</md-icon>
+               </md-button>
+               
+               <md-menu-content width = "6">
+                  <md-menu-item ng-repeat = "item in ['Masculino', 'Feminino']">
+                     <md-button ng-click = "ctrl.menuItemClick($index)">
+                        
+                        <div layout = "row">
+                           <md-icon md-menu-align-target class = "material-icons">
+                              add</md-icon>
+                           <p flex>{{item}}</p>
+                        </div>
+                        
+                     </md-button>
+                  </md-menu-item>
+               </md-menu-content>
+               
+            </md-menu>
+         </div>
+                  
+
+      </div>		
+            </form>
+         </md-content>
+      </div>
+   </body>
+</html>
